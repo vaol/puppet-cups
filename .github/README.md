@@ -527,6 +527,8 @@ Installs, configures, and manages the CUPS service.
 
 * `max_clients_per_host`: Specifies the maximum number of simultaneous clients to support from a single address.
 
+* `max_jobs`: Specifies the maximum number of jobs.
+
 * `max_log_size`: Sets the `MaxLogSize` directive of the CUPS server.
 
 * `max_request_size`: Specifies the maximum request/file size in bytes.

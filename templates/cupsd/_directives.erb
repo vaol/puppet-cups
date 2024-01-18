@@ -21,3 +21,4 @@ DefaultAuthType Basic
 <%= COMMENT_OUT if @server_alias.nil? -%>ServerAlias <%= @server_alias.is_a?(Array) ? @server_alias.join(' ') : @server_alias %>
 <%= COMMENT_OUT if @server_name.nil? -%>ServerName <%= @server_name %>
 <%= COMMENT_OUT if @web_interface.nil? -%>WebInterface <%= (@web_interface ? 'Yes' : 'No') %>
+<%= COMMENT_OUT if @max_jobs.nil? -%>MaxJobs <%= @max_jobs %>
