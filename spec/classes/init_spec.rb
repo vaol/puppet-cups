@@ -540,6 +540,46 @@ RSpec.describe 'cups' do
       end
     end
 
+    describe 'preserve_job_files' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^PreserveJobFiles/) }
+      end
+
+      context 'when set to 43200' do
+        let(:params) { { preserve_job_files: 43200 } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^PreserveJobFiles 43200$/) }
+      end
+
+      context 'when set to No' do
+        let(:params) { { preserve_job_files: 'No' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^PreserveJobFiles No$/) }
+      end
+    end
+
+    describe 'preserve_job_history' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^PreserveJobHistory/) }
+      end
+
+      context 'when set to 43200' do
+        let(:params) { { preserve_job_history: 43200 } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^PreserveJobHistory 43200$/) }
+      end
+
+      context 'when set to No' do
+        let(:params) { { preserve_job_history: 'No' } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^PreserveJobHistory No$/) }
+      end
+    end
+
     describe 'purge_unmanaged_queues' do
       let(:facts) { any_supported_os }
 

@@ -544,6 +544,10 @@ Installs, configures, and manages the CUPS service.
 
 * `papersize`: Sets the system's default `/etc/papersize`. See `man papersize` for supported values.
 
+* `preserve_job_files`: Sets the `PreserveJobFiles` directive of the CUPS server.
+
+* `preserve_job_history`: Sets the `PreserveJobHistory` directive of the CUPS server.
+
 * `purge_unmanaged_queues`: Setting `true` will remove all queues from the node
   which do not match a `cups_queue` resource in the current catalog. Defaults to `false`.
 
