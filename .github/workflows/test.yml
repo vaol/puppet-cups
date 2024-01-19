@@ -23,6 +23,8 @@ jobs:
             ${{ runner.os }}-gems-
       - run: bundle config set without 'acceptance_testing metatools'
       - run: bundle install
+      - run: bundle exec rake spec_prep
+      - run: bundle exec rake spec_standalone 
       # - uses: paambaati/codeclimate-action@v3.1.1
       #   with:
       #     coverageCommand: bundle exec rake github:actions
