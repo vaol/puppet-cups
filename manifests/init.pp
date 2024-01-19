@@ -42,6 +42,7 @@
 # @param log_time_format Sets the `LogTimeFormat` directive of the CUPS server.
 # @param max_clients Specifies the maximum number of simultaneous clients to support.
 # @param max_clients_per_host Specifies the maximum number of simultaneous clients to support from a single address.
+# @param max_jobs Specifies the maximum number of jobs.
 # @param max_log_size Sets the `MaxLogSize` directive of the CUPS server.
 # @param max_request_size Specifies the maximum request/file size in bytes.
 # @param package_ensure Whether CUPS packages should be `present` or `absent`.
@@ -50,6 +51,8 @@
 #   in order to run CUPS and provide `ipptool`. OS dependent defaults apply.
 # @param page_log_format Sets the `PageLogFormat` directive of the CUPS server.
 # @param papersize Sets the system's default `/etc/papersize`. See `man papersize` for supported values.
+# @param preserve_job_files Sets the `PreserveJobFiles` directive of the CUPS server.
+# @param preserve_job_history Sets the `PreserveJobHistory` directive of the CUPS server.
 # @param purge_unmanaged_queues Setting `true` will remove all queues from the node
 #   which do not match a `cups_queue` resource in the current catalog.
 # @param resources This attribute is intended for use with Hiera or any other ENC.
@@ -75,6 +78,7 @@ class cups (
   Optional[String]                         $log_time_format        = undef,
   Optional[Integer]                        $max_clients            = undef,
   Optional[Integer]                        $max_clients_per_host   = undef,
+  Optional[Integer]                        $max_jobs               = undef,
   Optional[Variant[Integer, String]]       $max_log_size           = undef,
   Optional[Integer]                        $max_request_size       = undef,
   String                                   $package_ensure         = 'present',
@@ -82,6 +86,8 @@ class cups (
   Variant[String, Array[String]]           $package_names          = $::cups::params::package_names,
   Optional[String]                         $page_log_format        = undef,
   Optional[String]                         $papersize              = undef,
+  Optional[Variant[Integer, String]]       $preserve_job_files     = undef,
+  Optional[Variant[Integer, String]]       $preserve_job_history   = undef,
   Boolean                                  $purge_unmanaged_queues = false,
   Optional[Hash]                           $resources              = undef,
   Optional[Variant[String, Array[String]]] $server_alias           = undef,

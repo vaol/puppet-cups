@@ -527,6 +527,8 @@ Installs, configures, and manages the CUPS service.
 
 * `max_clients_per_host`: Specifies the maximum number of simultaneous clients to support from a single address.
 
+* `max_jobs`: Specifies the maximum number of jobs.
+
 * `max_log_size`: Sets the `MaxLogSize` directive of the CUPS server.
 
 * `max_request_size`: Specifies the maximum request/file size in bytes.
@@ -541,6 +543,10 @@ Installs, configures, and manages the CUPS service.
 * `page_log_format`: Sets the `PageLogFormat` directive of the CUPS server.
 
 * `papersize`: Sets the system's default `/etc/papersize`. See `man papersize` for supported values.
+
+* `preserve_job_files`: Sets the `PreserveJobFiles` directive of the CUPS server.
+
+* `preserve_job_history`: Sets the `PreserveJobHistory` directive of the CUPS server.
 
 * `purge_unmanaged_queues`: Setting `true` will remove all queues from the node
   which do not match a `cups_queue` resource in the current catalog. Defaults to `false`.
