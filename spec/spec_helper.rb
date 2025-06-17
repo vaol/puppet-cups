@@ -2,56 +2,78 @@
 
 PROJECT_ROOT = File.expand_path(File.join(File.dirname(__FILE__), '..')).freeze
 
-require 'simplecov'
-
-SimpleCov.start do
-  add_filter '/.mdl/'
-  add_filter '/rakelib/'
-  add_filter '/spec/'
-  add_filter '/vendor/'
-end
-
-# RSpec configuration
-# http://www.rubydoc.info/github/rspec/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |c|
-  c.order = :random
-  Kernel.srand c.seed
-  c.disable_monkey_patching!
-  c.expect_with :rspec do |e|
-    e.syntax = :expect
-  end
-  c.mock_with(:rspec)
-  c.example_status_persistence_file_path = '.rspec_status'
+  c.mock_with :rspec
 end
 
 require 'puppetlabs_spec_helper/module_spec_helper'
-require 'rspec-puppet/spec_helper'
-
 require 'rspec-puppet-facts'
-include RspecPuppetFacts # rubocop:disable Style/MixinUsage
-add_custom_fact :systemd, nil
 
-def any_supported_os(more_facts = {})
-  facts_for(osfamily: 'Debian', operatingsystem: 'Ubuntu', lsbdistcodename: 'bionic').merge(more_facts)
-end
+require 'spec_helper_local' if File.file?(File.join(File.dirname(__FILE__), 'spec_helper_local.rb'))
 
-def facts_for(operating_system)
-  facter_db_facts = FacterDB
-                    .get_facts(operating_system)
-                    .max_by { |facts| Gem::Version.new(facts[:facterversion]) }
+include RspecPuppetFacts
 
-  RspecPuppetFacts.with_custom_facts('', facter_db_facts)
-end
+default_facts = {
+  puppetversion: Puppet.version,
+  facterversion: Facter.version,
+}
 
-# RSpec-Puppet configuration
-# http://rspec-puppet.com/setup/
-FIXTURE_PATH = File.join(PROJECT_ROOT, 'spec', 'fixtures').freeze
-RSpec.configure do |c|
-  c.after(:suite) do
-    RSpec::Puppet::Coverage.report! unless defined?(Spec::Runner::Formatter::TeamcityFormatter)
+default_fact_files = [
+  File.expand_path(File.join(File.dirname(__FILE__), 'default_facts.yml')),
+  File.expand_path(File.join(File.dirname(__FILE__), 'default_module_facts.yml')),
+]
+
+default_fact_files.each do |f|
+  next unless File.exist?(f) && File.readable?(f) && File.size?(f)
+
+  begin
+    require 'deep_merge'
+    default_facts.deep_merge!(YAML.safe_load(File.read(f), permitted_classes: [], permitted_symbols: [], aliases: true))
+  rescue StandardError => e
+    RSpec.configuration.reporter.message "WARNING: Unable to load #{f}: #{e}"
   end
-  c.manifest_dir = File.join(FIXTURE_PATH, 'manifests')
-  c.module_path = File.join(FIXTURE_PATH, 'modules')
+end
+
+# read default_facts and merge them over what is provided by facterdb
+default_facts.each do |fact, value|
+  add_custom_fact fact, value, merge_facts: true
+end
+
+RSpec.configure do |c|
+  c.default_facts = default_facts
+  c.before :each do
+    # set to strictest setting for testing
+    # by default Puppet runs at warning level
+    Puppet.settings[:strict] = :warning
+    Puppet.settings[:strict_variables] = true
+  end
+  c.filter_run_excluding(bolt: true) unless ENV['GEM_BOLT']
+  c.after(:suite) do
+    RSpec::Puppet::Coverage.report!(0)
+  end
+  # specify hiera config for running tests
+  c.hiera_config = File.expand_path(File.join(__FILE__, '../fixtures/hiera.yml'))
+
+  # Filter backtrace noise
+  backtrace_exclusion_patterns = [
+    %r{spec_helper},
+    %r{gems},
+  ]
+
+  if c.respond_to?(:backtrace_exclusion_patterns)
+    c.backtrace_exclusion_patterns = backtrace_exclusion_patterns
+  elsif c.respond_to?(:backtrace_clean_patterns)
+    c.backtrace_clean_patterns = backtrace_exclusion_patterns
+  end
+end
+
+# Ensures that a module is defined
+# @param module_name Name of the module
+def ensure_module_defined(module_name)
+  module_name.split('::').reduce(Object) do |last_module, next_module|
+    last_module.const_set(next_module, Module.new) unless last_module.const_defined?(next_module, false)
+    last_module.const_get(next_module, false)
+  end
 end
 
 # Make Puppet eXtension modules available

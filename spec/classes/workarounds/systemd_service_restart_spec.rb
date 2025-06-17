@@ -3,29 +3,39 @@
 require 'spec_helper'
 
 RSpec.describe 'cups::workarounds::systemd_service_restart' do
-  let(:dropin_name) { 'wait_until_cups_listens_on_port_631.conf' }
+  on_supported_os.each do |os, os_facts|
+    let(:dropin_name) { 'wait_until_cups_listens_on_port_631.conf' }
 
-  let(:dropin_content) { /^\[Socket\]\nListenStream=\[::1\]:631$/ }
+    let(:dropin_content) { /^\[Socket\]\nListenStream=\[::1\]:631$/ }
 
-  context 'when the distribution is NOT based on systemd' do
-    let(:facts) { any_supported_os(systemd: false) }
+    context 'when the distribution is NOT based on systemd' do
+      let(:facts) do
+        os_facts.merge(
+          systemd: false,
+        )
+      end
 
-    it { is_expected.to_not contain_systemd__dropin_file(dropin_name) }
-  end
-
-  context 'when the distribution is systemd based' do
-    let(:facts) { any_supported_os(systemd: true) }
-
-    it { is_expected.to contain_systemd__dropin_file(dropin_name).that_notifies('Class[cups::server::services]') }
-
-    context 'without params' do
-      it { is_expected.to contain_systemd__dropin_file(dropin_name).with(unit: 'cups.socket', content: dropin_content) }
+      it { is_expected.to_not contain_systemd__dropin_file(dropin_name) }
     end
 
-    context "with unit = 'mycups.socket'" do
-      let(:params) { { unit: 'mycups.socket' } }
+    context 'when the distribution is systemd based' do
+      let(:facts) do
+        os_facts.merge(
+          systemd: true,
+        )
+      end
 
-      it { is_expected.to contain_systemd__dropin_file(dropin_name).with(unit: 'mycups.socket', content: dropin_content) }
+      it { is_expected.to contain_systemd__dropin_file(dropin_name).that_notifies('Class[cups::server::services]') }
+
+      context 'without params' do
+        it { is_expected.to contain_systemd__dropin_file(dropin_name).with(unit: 'cups.socket', content: dropin_content) }
+      end
+
+      context "with unit = 'mycups.socket'" do
+        let(:params) { { unit: 'mycups.socket' } }
+
+        it { is_expected.to contain_systemd__dropin_file(dropin_name).with(unit: 'mycups.socket', content: dropin_content) }
+      end
     end
   end
 end
