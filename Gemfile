@@ -40,6 +40,7 @@ group :development do
   gem 'net-ftp',                                 require: false
   gem 'github_api',                              require: false
   gem 'rubocop-rake',                            require: false
+  gem 'patron',                                  require: false
 
 
 end
