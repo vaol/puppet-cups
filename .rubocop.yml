@@ -38,8 +38,7 @@ Style/BlockDelimiters:
     be consistent then.
   EnforcedStyle: braces_for_chaining
 Style/ClassAndModuleChildren:
-  Description: Compact style reduces the required amount of indentation.
-  EnforcedStyle: compact
+  Enabled: false
 Style/EmptyElse:
   Description: Enforce against empty else clauses, but allow `nil` for clarity.
   EnforcedStyle: empty
@@ -73,7 +72,7 @@ Style/SymbolArray:
   Description: Using percent style obscures symbolic intent of array's contents.
   EnforcedStyle: brackets
 RSpec/MessageSpies:
-  EnforcedStyle: receive
+  Enabled: false
 Style/Documentation:
   Exclude:
   - lib/puppet/parser/functions/**/*
@@ -728,3 +727,18 @@ Style/StringChars:
   Enabled: false
 Style/SwapValues:
   Enabled: false
+Style/PredicateName:
+  Description: Check the names of predicate methods.
+  StyleGuide: "#bool-methods-qmark"
+  Enabled: true
+  NamePrefix:
+  - is_
+  - has_
+  - have_
+  ForbiddenPrefixes:
+  - is_
+  - has_
+  - have_
+  AllowedMethods:
+  - is_a?
+  - is_to_s
