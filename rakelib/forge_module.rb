@@ -28,7 +28,7 @@ class ForgeModule
 
     regex = %r{https://github.com/(?<owner>\w+)/(?<repo>[^/\#?\s]+)}
 
-    raise ArgumentError, "metadata.json: Value for key 'source' is not a GitHub repository" unless source =~ regex
+    raise ArgumentError, "metadata.json: Value for key 'source' is not a GitHub repository" unless source&.match?(regex)
 
     match_data = metadata['source'].match(regex)
 
@@ -49,10 +49,10 @@ class ForgeModule
     title = nil
     changes = []
     @changelog.each_line do |line|
-      break if line =~ /^## / && !title.nil?
+      break if line =~ %r{^## } && !title.nil?
 
       changes << line unless title.nil?
-      title = line.match(/^## \d+-\d+-\d+ - (?<title>.*)$/)[:title] if line =~ /^## /
+      title = line.match(%r{^## \d+-\d+-\d+ - (?<title>.*)$})[:title] if %r{^## }.match?(line)
     end
 
     { title: title.strip, changes: changes.join.strip, version: version }

@@ -120,7 +120,7 @@ Puppet::Type.newtype(:cups_queue) do
     desc '(mandatory) Queue names may contain any printable character except SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or "#".'
 
     validate do |name|
-      raise ArgumentError, 'Queue names may NOT contain SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or "#".' if name =~ %r{[\s"'\\,#/]}
+      raise ArgumentError, 'Queue names may NOT contain SPACES, TABS, (BACK)SLASHES, QUOTES, COMMAS or "#".' if %r{[\s"'\\,#/]}.match?(name)
     end
   end
 
@@ -138,13 +138,13 @@ Puppet::Type.newtype(:cups_queue) do
 
     validate do |value|
       raise ArgumentError, 'Please provide a hash value.' unless value.is_a?(Hash)
-      raise ArgumentError, 'Please provide a hash with both keys `policy` and `users`.' unless value.keys.sort == %w[policy users].sort
+      raise ArgumentError, 'Please provide a hash with both keys `policy` and `users`.' unless value.keys.sort == ['policy', 'users'].sort
       raise ArgumentError, "The value 'policy => #{value['policy']}' is unsupported. Valid values are 'allow' and 'deny'." \
         if value.key?('policy') && !%(allow, deny).include?(value['policy'])
       raise ArgumentError, 'Please provide a non-empty array of user names.' unless value['users'].is_a?(Array) && !value['users'].empty?
 
       value['users'].each do |name|
-        raise ArgumentError, "The user or group name '#{name}' seems malformed" unless name =~ /\A@?[\w-]+\Z/
+        raise ArgumentError, "The user or group name '#{name}' seems malformed" unless %r{\A@?[\w-]+\Z}.match?(name)
       end
     end
 
@@ -208,7 +208,7 @@ Puppet::Type.newtype(:cups_queue) do
 
     validate do |value|
       raise ArgumentError, 'The list of members must not be empty.' if value.empty?
-      raise ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if value =~ %r{[\s/#]}
+      raise ArgumentError, 'CUPS queue names may NOT contain the characters SPACE, TAB, "/", or "#".' if %r{[\s/#]}.match?(value)
     end
 
     def is_to_s(value)

@@ -347,7 +347,7 @@ RSpec.describe 'Ipptool' do
   context 'when there are printer queues but no class queues' do
     before(:all) do
       purge_all_queues
-      @printers = %w[BackOffice Office Warehouse]
+      @printers = ['BackOffice', 'Office', 'Warehouse']
       @printers.each { |printer| add_printers(printer) }
     end
 
@@ -625,9 +625,9 @@ RSpec.describe 'Ipptool' do
       purge_all_queues
       add_printers('BackOffice', 'Office', 'Warehouse')
       add_printers_to_classes(
-        'CrawlSpace' => %w[],
-        'GroundFloor' => %w[Office Warehouse],
-        'UpperFloor' => %w[BackOffice]
+        'CrawlSpace' => [],
+        'GroundFloor' => ['Office', 'Warehouse'],
+        'UpperFloor' => ['BackOffice'],
       )
     end
 

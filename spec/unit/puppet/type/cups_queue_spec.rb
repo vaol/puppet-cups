@@ -95,7 +95,7 @@ RSpec.describe "Type 'cups_queue'" do
           end
 
           it 'fails to create an instance' do
-            expect { type.new(manifest) }.to raise_error(/member/)
+            expect { type.new(manifest) }.to raise_error(%r{member})
           end
         end
 
@@ -109,7 +109,7 @@ RSpec.describe "Type 'cups_queue'" do
           end
 
           it 'fails to create an instance' do
-            expect { type.new(manifest) }.to raise_error(/member/)
+            expect { type.new(manifest) }.to raise_error(%r{member})
           end
         end
 
@@ -132,7 +132,7 @@ RSpec.describe "Type 'cups_queue'" do
             {
               ensure: 'class',
               name: 'GroundFloor',
-              members: %w[Office Warehouse]
+              members: ['Office', 'Warehouse']
             }
           end
 
@@ -213,7 +213,7 @@ RSpec.describe "Type 'cups_queue'" do
         end
 
         it 'fails to create an instance' do
-          expect { type.new(manifest) }.to raise_error(/mutually/)
+          expect { type.new(manifest) }.to raise_error(%r{mutually})
         end
       end
     end
@@ -225,13 +225,13 @@ RSpec.describe "Type 'cups_queue'" do
         {
           ensure: 'class',
           name: 'GroundFloor',
-          members: %w[Office Warehouse],
+          members: ['Office', 'Warehouse'],
           model: 'drv:///sample.drv/generic.ppd'
         }
       end
 
       it 'fails to create an instance' do
-        expect { type.new(manifest) }.to raise_error(/support/)
+        expect { type.new(manifest) }.to raise_error(%r{support})
       end
     end
 
@@ -240,13 +240,13 @@ RSpec.describe "Type 'cups_queue'" do
         {
           ensure: 'class',
           name: 'GroundFloor',
-          members: %w[Office Warehouse],
+          members: ['Office', 'Warehouse'],
           ppd: '/usr/share/cups/model/myprinter.ppd'
         }
       end
 
       it 'fails to create an instance' do
-        expect { type.new(manifest) }.to raise_error(/support/)
+        expect { type.new(manifest) }.to raise_error(%r{support})
       end
     end
 
@@ -255,13 +255,13 @@ RSpec.describe "Type 'cups_queue'" do
         {
           ensure: 'class',
           name: 'GroundFloor',
-          members: %w[Office Warehouse],
+          members: ['Office', 'Warehouse'],
           make_and_model: 'Local Printer Class'
         }
       end
 
       it 'fails to create an instance' do
-        expect { type.new(manifest) }.to raise_error(/support/)
+        expect { type.new(manifest) }.to raise_error(%r{support})
       end
     end
 
@@ -270,13 +270,13 @@ RSpec.describe "Type 'cups_queue'" do
         {
           ensure: 'class',
           name: 'GroundFloor',
-          members: %w[Office Warehouse],
+          members: ['Office', 'Warehouse'],
           uri: 'lpd://192.168.2.105/binary_p1'
         }
       end
 
       it 'fails to create an instance' do
-        expect { type.new(manifest) }.to raise_error(/support/)
+        expect { type.new(manifest) }.to raise_error(%r{support})
       end
     end
 
@@ -286,12 +286,12 @@ RSpec.describe "Type 'cups_queue'" do
           ensure: 'printer',
           name: 'GroundFloor',
           model: 'drv:///sample.drv/generic.ppd',
-          members: %w[Office Warehouse]
+          members: ['Office', 'Warehouse']
         }
       end
 
       it 'fails to create an instance' do
-        expect { type.new(manifest) }.to raise_error(/support/)
+        expect { type.new(manifest) }.to raise_error(%r{support})
       end
     end
   end
@@ -323,61 +323,61 @@ RSpec.describe "Type 'cups_queue'" do
       it 'rejects a string with a SPACE' do
         manifest = minimal_printer.merge(name: 'RSpec Test_Printer')
 
-        expect { type.new(manifest) }.to raise_error(/SPACE/)
+        expect { type.new(manifest) }.to raise_error(%r{SPACE})
       end
 
       it 'rejects a string with a TAB' do
         manifest = minimal_printer.merge(name: "RSpec\tTest_Printer")
 
-        expect { type.new(manifest) }.to raise_error(/TAB/)
+        expect { type.new(manifest) }.to raise_error(%r{TAB})
       end
 
       it 'rejects a string with a carriage return character' do
         manifest = minimal_printer.merge(name: "RSpec\rTest_Printer")
 
-        expect { type.new(manifest) }.to raise_error(/SPACE/)
+        expect { type.new(manifest) }.to raise_error(%r{SPACE})
       end
 
       it 'rejects a string with a newline character' do
         manifest = minimal_printer.merge(name: "RSpec\nTest_Printer")
 
-        expect { type.new(manifest) }.to raise_error(/SPACE/)
+        expect { type.new(manifest) }.to raise_error(%r{SPACE})
       end
 
       it 'rejects a string with a SLASH' do
         manifest = minimal_printer.merge(name: 'RSpec/Test_Printer')
 
-        expect { type.new(manifest) }.to raise_error(/SLASH/)
+        expect { type.new(manifest) }.to raise_error(%r{SLASH})
       end
 
       it 'rejects a string with a BACKSLASH' do
         manifest = minimal_printer.merge(name: 'RSpec\Test_Printer')
 
-        expect { type.new(manifest) }.to raise_error(/BACK[)]?SLASH/)
+        expect { type.new(manifest) }.to raise_error(%r{BACK[)]?SLASH})
       end
 
       it 'rejects a string with a SINGLEQUOTE' do
         manifest = minimal_printer.merge(name: "RSpec'Test_Printer")
 
-        expect { type.new(manifest) }.to raise_error(/QUOTE/)
+        expect { type.new(manifest) }.to raise_error(%r{QUOTE})
       end
 
       it 'rejects a string with a DOUBLEQUOTE' do
         manifest = minimal_printer.merge(name: 'RSpec"Test_Printer')
 
-        expect { type.new(manifest) }.to raise_error(/QUOTE/)
+        expect { type.new(manifest) }.to raise_error(%r{QUOTE})
       end
 
       it 'rejects a string with a COMMA' do
         manifest = minimal_printer.merge(name: 'RSpec,Test_Printer')
 
-        expect { type.new(manifest) }.to raise_error(/COMMA/)
+        expect { type.new(manifest) }.to raise_error(%r{COMMA})
       end
 
       it 'rejects a string with a "#"' do
         manifest = minimal_printer.merge(name: 'RSpec#Test_Printer')
 
-        expect { type.new(manifest) }.to raise_error(/"#"/)
+        expect { type.new(manifest) }.to raise_error(%r{"#"})
       end
     end
 
@@ -408,14 +408,14 @@ RSpec.describe "Type 'cups_queue'" do
         let(:resource) { type.new(manifest) }
         let(:provider) { type.provider(:cups).new(resource) }
 
-        before do
+        before(:each) do
           resource.provider = provider
         end
 
         context 'when the class is absent' do
           let(:manifest) { { name: 'UpperFloor', ensure: 'class', members: ['BackOffice'] } }
 
-          before do
+          before(:each) do
             allow(provider).to receive(:class_exists?).and_return(false)
           end
 
@@ -431,7 +431,7 @@ RSpec.describe "Type 'cups_queue'" do
         context 'when the class is present' do
           let(:manifest) { { name: 'UpperFloor', ensure: 'class', members: ['BackOffice'] } }
 
-          before do
+          before(:each) do
             allow(provider).to receive(:class_exists?).and_return(true)
           end
 
@@ -447,7 +447,7 @@ RSpec.describe "Type 'cups_queue'" do
         context 'when a printer by the same name is present' do
           let(:manifest) { { name: 'UpperFloor', ensure: 'class', members: ['BackOffice'] } }
 
-          before do
+          before(:each) do
             allow(provider).to receive(:printer_exists?).and_return(true)
           end
 
@@ -465,14 +465,14 @@ RSpec.describe "Type 'cups_queue'" do
         let(:resource) { type.new(manifest) }
         let(:provider) { type.provider(:cups).new(resource) }
 
-        before do
+        before(:each) do
           resource.provider = provider
         end
 
         context 'when the printer is absent' do
           let(:manifest) { { name: 'Office', ensure: 'printer' } }
 
-          before do
+          before(:each) do
             allow(provider).to receive(:printer_exists?).and_return(false)
           end
 
@@ -488,7 +488,7 @@ RSpec.describe "Type 'cups_queue'" do
         context 'when the printer is present' do
           let(:manifest) { { name: 'Office', ensure: 'printer' } }
 
-          before do
+          before(:each) do
             allow(provider).to receive(:printer_exists?).and_return(true)
           end
 
@@ -504,7 +504,7 @@ RSpec.describe "Type 'cups_queue'" do
         context 'when a class by the same name is present' do
           let(:manifest) { { name: 'Office', ensure: 'printer' } }
 
-          before do
+          before(:each) do
             allow(provider).to receive(:class_exists?).and_return(false)
           end
 
@@ -522,14 +522,14 @@ RSpec.describe "Type 'cups_queue'" do
         let(:resource) { type.new(manifest) }
         let(:provider) { type.provider(:cups).new(resource) }
 
-        before do
+        before(:each) do
           resource.provider = provider
         end
 
         context 'when the printer is absent' do
           let(:manifest) { { name: 'Office', ensure: 'absent' } }
 
-          before do
+          before(:each) do
             allow(provider).to receive(:queue_exists?).and_return(false)
           end
 
@@ -545,7 +545,7 @@ RSpec.describe "Type 'cups_queue'" do
         context 'when a queue by the same name is present' do
           let(:manifest) { { name: 'Office', ensure: 'absent' } }
 
-          before do
+          before(:each) do
             allow(provider).to receive(:queue_exists?).and_return(true)
           end
 
@@ -633,7 +633,7 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'rejects an array' do
-        expect { resource[:access] = %w[a b] }.to raise_error(Puppet::ResourceError)
+        expect { resource[:access] = ['a', 'b'] }.to raise_error(Puppet::ResourceError)
       end
 
       it 'rejects a string' do
@@ -645,19 +645,19 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'rejects a hash with unsupported policy' do
-        expect { resource[:access] = { 'policy' => 'random', 'users' => ['lumbergh'] } }.to raise_error(Puppet::ResourceError, /unsupported/)
+        expect { resource[:access] = { 'policy' => 'random', 'users' => ['lumbergh'] } }.to raise_error(Puppet::ResourceError, %r{unsupported})
       end
 
       it 'rejects a hash with empty users array' do
-        expect { resource[:access] = { 'policy' => 'allow', 'users' => [] } }.to raise_error(Puppet::ResourceError, /non-empty/)
+        expect { resource[:access] = { 'policy' => 'allow', 'users' => [] } }.to raise_error(Puppet::ResourceError, %r{non-empty})
       end
 
       it 'rejects user names with spaces' do
-        expect { resource[:access] = { 'policy' => 'allow', 'users' => ['@coun cil'] } }.to raise_error(Puppet::ResourceError, /malformed/)
+        expect { resource[:access] = { 'policy' => 'allow', 'users' => ['@coun cil'] } }.to raise_error(Puppet::ResourceError, %r{malformed})
       end
 
       it 'rejects user names with commas' do
-        expect { resource[:access] = { 'policy' => 'allow', 'users' => ['@coun,cil'] } }.to raise_error(Puppet::ResourceError, /malformed/)
+        expect { resource[:access] = { 'policy' => 'allow', 'users' => ['@coun,cil'] } }.to raise_error(Puppet::ResourceError, %r{malformed})
       end
     end
 
@@ -734,7 +734,7 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'rejects an array' do
-        expect { resource[:options] = %w[a b] }.to raise_error(Puppet::ResourceError)
+        expect { resource[:options] = ['a', 'b'] }.to raise_error(Puppet::ResourceError)
       end
 
       it 'rejects a string' do
@@ -742,7 +742,7 @@ RSpec.describe "Type 'cups_queue'" do
       end
 
       it 'rejects a hash containing options already managed by other attributes' do
-        %w[printer-is-accepting-jobs printer-info printer-state printer-location printer-is-shared device-uri].each do |key|
+        ['printer-is-accepting-jobs', 'printer-info', 'printer-state', 'printer-location', 'printer-is-shared', 'device-uri'].each do |key|
           expect { resource[:options] = { key => 'some value' } }.to raise_error(Puppet::ResourceError)
         end
       end

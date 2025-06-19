@@ -51,7 +51,7 @@ module PuppetX
         query = PuppetX::Cups::Ipp::QueryC.new('/', cups_get_classes)
         query.results.each do |line|
           classname, members = line.split(',', 2)
-          answer[classname] = members.gsub(/\A"|"\Z/, '').split(',') if members
+          answer[classname] = members.gsub(%r{\A"|"\Z}, '').split(',') if members
         end
 
         answer

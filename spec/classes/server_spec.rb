@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe 'cups::server' do
-  on_supported_os.each do |os, os_facts|
+  on_supported_os.each do |_os, os_facts|
     context 'with default values for all parameters' do
       let(:facts) { os_facts }
 

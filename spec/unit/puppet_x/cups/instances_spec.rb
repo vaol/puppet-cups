@@ -23,7 +23,7 @@ end
 RSpec.describe PuppetX::Cups::Instances do
   describe '##classes' do
     context 'without printers or classes installed' do
-      before do
+      before(:each) do
         cups_get_classes <<~OUTPUT
           printer-name,member-names
         OUTPUT
@@ -39,7 +39,7 @@ RSpec.describe PuppetX::Cups::Instances do
     end
 
     context 'with printers, but without classes installed' do
-      before do
+      before(:each) do
         cups_get_classes <<~OUTPUT
           printer-name,member-names
         OUTPUT
@@ -58,7 +58,7 @@ RSpec.describe PuppetX::Cups::Instances do
     end
 
     context 'with printers and classes installed' do
-      before do
+      before(:each) do
         cups_get_classes <<~OUTPUT
             printer-name,member-names
             CrawlSpace,
@@ -78,14 +78,14 @@ RSpec.describe PuppetX::Cups::Instances do
       end
 
       it 'returns an array with the names of all installed printers, including classes' do
-        expect(described_class.classes).to match_array(%w[CrawlSpace GroundFloor UpperFloor])
+        expect(described_class.classes).to match_array(['CrawlSpace', 'GroundFloor', 'UpperFloor'])
       end
     end
   end
 
   describe '##class_members' do
     context 'with no classes installed' do
-      before do
+      before(:each) do
         cups_get_classes <<~OUTPUT
             printer-name,member-names
         OUTPUT
@@ -104,7 +104,7 @@ RSpec.describe PuppetX::Cups::Instances do
     end
 
     context 'with classes installed' do
-      before do
+      before(:each) do
         cups_get_classes <<~OUTPUT
           printer-name,member-names
           CrawlSpace,
@@ -125,9 +125,9 @@ RSpec.describe PuppetX::Cups::Instances do
 
       let(:expected) do
         {
-          'CrawlSpace' => %w[],
-          'GroundFloor' => %w[Office Warehouse],
-          'UpperFloor' => %w[BackOffice]
+          'CrawlSpace' => [],
+          'GroundFloor' => ['Office', 'Warehouse'],
+          'UpperFloor' => ['BackOffice']
         }
       end
 
@@ -139,7 +139,7 @@ RSpec.describe PuppetX::Cups::Instances do
 
   describe '##printers' do
     context 'without printers or classes installed' do
-      before do
+      before(:each) do
         cups_get_classes <<~OUTPUT
           printer-name,member-names
         OUTPUT
@@ -155,7 +155,7 @@ RSpec.describe PuppetX::Cups::Instances do
     end
 
     context 'with printers, but without classes installed' do
-      before do
+      before(:each) do
         cups_get_classes <<~OUTPUT
           printer-name,member-names
         OUTPUT
@@ -169,12 +169,12 @@ RSpec.describe PuppetX::Cups::Instances do
       end
 
       it 'returns an array with the names of all installed printers' do
-        expect(described_class.printers).to match_array(%w[BackOffice Office Warehouse])
+        expect(described_class.printers).to match_array(['BackOffice', 'Office', 'Warehouse'])
       end
     end
 
     context 'with printers and classes installed' do
-      before do
+      before(:each) do
         cups_get_classes <<~OUTPUT
           printer-name,member-names
           CrawlSpace,
@@ -194,14 +194,14 @@ RSpec.describe PuppetX::Cups::Instances do
       end
 
       it 'returns an array with the names of all installed printers, including classes' do
-        expect(described_class.printers).to match_array(%w[BackOffice Office Warehouse])
+        expect(described_class.printers).to match_array(['BackOffice', 'Office', 'Warehouse'])
       end
     end
   end
 
   describe '##queues' do
     context 'without queues installed' do
-      before do
+      before(:each) do
         cups_get_classes <<~OUTPUT
           printer-name,member-names
         OUTPUT
@@ -217,7 +217,7 @@ RSpec.describe PuppetX::Cups::Instances do
     end
 
     context 'with queues installed' do
-      before do
+      before(:each) do
         cups_get_classes <<~OUTPUT
           printer-name,member-names
           CrawlSpace,
@@ -237,7 +237,7 @@ RSpec.describe PuppetX::Cups::Instances do
       end
 
       it 'returns an array with the names of all installed queues' do
-        expect(described_class.queues).to match_array(%w[CrawlSpace BackOffice GroundFloor Office UpperFloor Warehouse])
+        expect(described_class.queues).to match_array(['CrawlSpace', 'BackOffice', 'GroundFloor', 'Office', 'UpperFloor', 'Warehouse'])
       end
     end
   end

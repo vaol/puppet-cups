@@ -132,7 +132,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           before(:all) do
             purge_all_queues
             add_printers('Office', 'Warehouse')
-            add_printers_to_classes('GroundFloor' => %w[Warehouse])
+            add_printers_to_classes('GroundFloor' => ['Warehouse'])
           end
 
           it 'applies changes' do
@@ -148,7 +148,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           before(:all) do
             purge_all_queues
             add_printers('Office', 'Warehouse')
-            add_printers_to_classes('GroundFloor' => %w[Warehouse Office])
+            add_printers_to_classes('GroundFloor' => ['Warehouse', 'Office'])
           end
 
           it 'applies changes' do
@@ -164,7 +164,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           before(:all) do
             purge_all_queues
             add_printers('BackOffice', 'Office', 'Warehouse')
-            add_printers_to_classes('GroundFloor' => %w[Warehouse BackOffice Office])
+            add_printers_to_classes('GroundFloor' => ['Warehouse', 'BackOffice', 'Office'])
           end
 
           it 'applies changes' do
@@ -200,7 +200,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           before(:all) do
             purge_all_queues
             add_printers('Office')
-            add_printers_to_classes('GroundFloor' => %w[Office])
+            add_printers_to_classes('GroundFloor' => ['Office'])
           end
 
           it 'applies changes' do
@@ -216,7 +216,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           before(:all) do
             purge_all_queues
             add_printers('BackOffice', 'Office')
-            add_printers_to_classes('GroundFloor' => %w[BackOffice Office])
+            add_printers_to_classes('GroundFloor' => ['BackOffice', 'Office'])
           end
 
           it 'applies changes' do

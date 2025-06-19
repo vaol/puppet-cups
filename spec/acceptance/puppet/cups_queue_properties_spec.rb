@@ -231,7 +231,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to_not match(/printer-state-reasons=\S*paused\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to_not match(%r{printer-state-reasons=\S*paused\S*})
           end
 
           it 'is idempotent' do
@@ -254,7 +254,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to match(/printer-state-reasons=\S*paused\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to match(%r{printer-state-reasons=\S*paused\S*})
           end
 
           it 'is idempotent' do
@@ -283,7 +283,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to match(/printer-state-reasons=\S*hold-new-jobs\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to match(%r{printer-state-reasons=\S*hold-new-jobs\S*})
           end
 
           it 'is idempotent' do
@@ -306,7 +306,7 @@ RSpec.describe 'Custom type `cups_queue`' do
           end
 
           it 'sets the correct value' do
-            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to_not match(/printer-state-reasons=\S*hold-new-jobs\S*/)
+            expect(shell("lpoptions -p #{Shellwords.escape(name)}").stdout).to_not match(%r{printer-state-reasons=\S*hold-new-jobs\S*})
           end
 
           it 'is idempotent' do

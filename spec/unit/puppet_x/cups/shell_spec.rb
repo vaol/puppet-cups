@@ -30,7 +30,7 @@ RSpec.describe PuppetX::Cups::Shell do
 
       let(:mock_ps) { instance_double(Process::Status) }
 
-      before do
+      before(:each) do
         allow(mock_ps).to receive(:exitstatus).and_return(exitcode)
         allow(Open3).to receive(:capture3).with(command, stdin_data: stdin).and_return([stdout, stderr, mock_ps])
       end

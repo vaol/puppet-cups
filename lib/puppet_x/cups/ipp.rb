@@ -142,11 +142,11 @@ module PuppetX
         #
         # @return [Array] All values matching the requested attribute
         def results
-          result = /\bDISPLAY\s+(?<attribute>\S+)/i.match(@shellout.stdin)
+          result = %r{\bDISPLAY\s+(?<attribute>\S+)}i.match(@shellout.stdin)
 
           raise! if result[:attribute].nil?
 
-          @shellout.stdout.scan(/#{result[:attribute]} \([^)]+\) = (.*)$/).flatten
+          @shellout.stdout.scan(%r{#{result[:attribute]} \([^)]+\) = (.*)$}).flatten
         end
 
         private

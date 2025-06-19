@@ -29,4 +29,4 @@ PuppetLint.configuration.send('disable_manifest_whitespace_class_name_single_spa
 # do not fail job if checks are flagged as warnings
 PuppetLint.configuration.fail_on_warnings = false
 
-PuppetLint.configuration.ignore_paths = [".vendor/**/*.pp", ".bundle/**/*.pp", "pkg/**/*.pp", "spec/**/*.pp", "tests/**/*.pp", "types/**/*.pp", "vendor/**/*.pp"]
+PuppetLint.configuration.ignore_paths = ['.vendor/**/*.pp', '.bundle/**/*.pp', 'pkg/**/*.pp', 'spec/**/*.pp', 'tests/**/*.pp', 'types/**/*.pp', 'vendor/**/*.pp']

@@ -7,7 +7,7 @@ RSpec.configure do |c|
 end
 
 RSpec.describe 'nina.initech.com' do
-  on_supported_os.each do |os, os_facts|
+  on_supported_os.each do |_os, os_facts|
     let(:facts) do
       os_facts.merge(
         certname: 'nina.initech.com',
@@ -25,7 +25,7 @@ RSpec.describe 'nina.initech.com' do
 
       it { is_expected.to contain_cups_queue('Warehouse').with(ensure: 'printer') }
 
-      it { is_expected.to contain_cups_queue('GroundFloor').with(ensure: 'class', members: %w[Office Warehouse]) }
+      it { is_expected.to contain_cups_queue('GroundFloor').with(ensure: 'class', members: ['Office', 'Warehouse']) }
     end
   end
 end

@@ -10,9 +10,9 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     context "when 'access' is NOT specified" do
       let(:resource) { cups_queue.new(name: 'Office', ensure: 'printer') }
       let(:provider) { cups.new(resource) }
-      let(:acl) { { 'policy' => 'allow', 'users' => %w[lumbergh nina] } }
+      let(:acl) { { 'policy' => 'allow', 'users' => ['lumbergh', 'nina'] } }
 
-      before do
+      before(:each) do
         allow(provider).to receive(:access).and_return(acl)
         allow(provider).to receive(:access=)
         allow(provider).to receive(:cupsenable)
@@ -38,10 +38,10 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     end
 
     context "when 'access' was specified" do
-      let(:resource) { cups_queue.new(ensure: 'printer', name: 'Office', access: { 'policy' => 'allow', 'users' => %w[lumbergh nina] }) }
+      let(:resource) { cups_queue.new(ensure: 'printer', name: 'Office', access: { 'policy' => 'allow', 'users' => ['lumbergh', 'nina'] }) }
       let(:provider) { cups.new(resource) }
 
-      before do
+      before(:each) do
         allow(provider).to receive(:access).and_return('policy' => 'allow', 'users' => ['@council'])
         allow(provider).to receive(:access=)
         allow(provider).to receive(:cupsenable)
@@ -62,7 +62,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
       it 'sets the acl specified' do
         provider.enabled = :true
 
-        expect(provider).to have_received(:access=).with('policy' => 'allow', 'users' => %w[lumbergh nina])
+        expect(provider).to have_received(:access=).with('policy' => 'allow', 'users' => ['lumbergh', 'nina'])
       end
     end
   end

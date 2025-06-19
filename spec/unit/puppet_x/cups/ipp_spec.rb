@@ -79,7 +79,7 @@ RSpec.describe PuppetX::Cups::Ipp do
 
           query = described_class.new('/', '{ [CUPS-Get-Printers] }')
 
-          expect(query.results).to match_array(%w[Office])
+          expect(query.results).to match_array(['Office'])
         end
       end
 
@@ -102,7 +102,7 @@ RSpec.describe PuppetX::Cups::Ipp do
 
           query = described_class.new('/', '{ [CUPS-Get-Printers] }')
 
-          expect(query.results).to match_array(%w[Office BackOffice Warehouse])
+          expect(query.results).to match_array(['Office', 'BackOffice', 'Warehouse'])
         end
       end
     end
@@ -230,7 +230,7 @@ RSpec.describe PuppetX::Cups::Ipp do
 
           query = described_class.new('/', request)
 
-          expect(query.results).to match_array(%w[Office])
+          expect(query.results).to match_array(['Office'])
         end
       end
 
@@ -266,7 +266,7 @@ RSpec.describe PuppetX::Cups::Ipp do
 
           query = described_class.new('/', request)
 
-          expect(query.results).to match_array(%w[Office BackOffice Warehouse])
+          expect(query.results).to match_array(['Office', 'BackOffice', 'Warehouse'])
         end
       end
     end

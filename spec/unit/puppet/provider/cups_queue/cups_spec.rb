@@ -9,7 +9,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
   describe 'static class method' do
     describe '#instances' do
       shared_examples 'correct instances' do |class_members, printers|
-        before do
+        before(:each) do
           allow(PuppetX::Cups::Instances).to receive(:class_members).and_return(class_members)
           allow(PuppetX::Cups::Instances).to receive(:printers).and_return(printers)
         end
@@ -40,15 +40,15 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
       end
 
       context 'with printers, but without classes installed' do
-        include_examples 'correct instances', [{}, %w[BackOffice Office Warehouse]]
+        include_examples 'correct instances', [{}, ['BackOffice', 'Office', 'Warehouse']]
       end
 
       context 'with printers and classes installed' do
         include_examples 'correct instances', [{
-          'CrawlSpace' => %w[],
-          'GroundFloor' => %w[Office Warehouse],
-          'UpperFloor' => %w[BackOffice]
-        }, %w[BackOffice Office Warehouse]]
+          'CrawlSpace' => [],
+          'GroundFloor' => ['Office', 'Warehouse'],
+          'UpperFloor' => ['BackOffice']
+        }, ['BackOffice', 'Office', 'Warehouse']]
       end
     end
 
@@ -61,12 +61,12 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         end
 
         let(:resource_hash) do
-          specified.map do |name|
+          specified.map { |name|
             [name, cups_queue.new(name: name, ensure: :printer)]
-          end.to_h
+          }.to_h
         end
 
-        before do
+        before(:each) do
           allow(cups).to receive(:instances).and_return(instances)
 
           cups.prefetch(resource_hash)
@@ -82,26 +82,26 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
       end
 
       context 'when no queues are installed' do
-        include_examples 'correct prefetch', [%w[BackOffice Office Warehouse], %w[]]
+        include_examples 'correct prefetch', [['BackOffice', 'Office', 'Warehouse'], []]
       end
 
       context 'when some specified queues are installed' do
-        include_examples 'correct prefetch', [%w[BackOffice Office Warehouse], %w[Office]]
+        include_examples 'correct prefetch', [['BackOffice', 'Office', 'Warehouse'], ['Office']]
       end
 
       context 'when more queues are installed than specified' do
-        include_examples 'correct prefetch', [%w[Office], %w[BackOffice Office Warehouse]]
+        include_examples 'correct prefetch', [['Office'], ['BackOffice', 'Office', 'Warehouse']]
       end
     end
   end
 
   context 'when managing a class' do
-    let(:resource) { cups_queue.new(name: 'GroundFloor', ensure: 'class', members: %w[Office Warehouse]) }
+    let(:resource) { cups_queue.new(name: 'GroundFloor', ensure: 'class', members: ['Office', 'Warehouse']) }
     let(:provider) { cups.new(resource) }
 
     describe '#create_class' do
       context 'when using a minimal manifest with two members' do
-        before do
+        before(:each) do
           allow(provider).to receive(:lpadmin)
         end
 
@@ -140,7 +140,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         let(:switch) { { model: '-m', ppd: '-P' } }
         let(:method) { (manifest.keys & switch.keys)[0] }
 
-        before do
+        before(:each) do
           allow(provider).to receive(:lpadmin)
           allow(provider).to receive(:check_make_and_model)
         end
@@ -338,8 +338,8 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     end
 
     describe '#enabled=' do
-      before do
-        allow(provider).to receive(:access).and_return('policy' => 'allow', 'users' => %w[lumbergh nina])
+      before(:each) do
+        allow(provider).to receive(:access).and_return('policy' => 'allow', 'users' => ['lumbergh', 'nina'])
         allow(provider).to receive(:lpadmin).and_return(nil)
       end
 
@@ -442,7 +442,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
     end
 
     describe '#make_and_model=(_value)' do
-      before do
+      before(:each) do
         allow(provider).to receive(:create_printer).and_return(nil)
         allow(provider).to receive(:check_make_and_model).and_return(nil)
       end
@@ -468,7 +468,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
           allow(provider).to receive(:class_exists?).and_return(true)
           allow(provider).to receive(:create_class)
 
-          provider.members = %w[Office Warehouse]
+          provider.members = ['Office', 'Warehouse']
 
           expect(provider).to have_received(:create_class)
         end
@@ -488,7 +488,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
       end
 
       context 'when the `options` property is specified' do
-        before do
+        before(:each) do
           allow(resource).to receive(:should).with(:options).and_return(desired)
           allow(provider).to receive(:supported_options_is).and_return(current)
         end
@@ -498,7 +498,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
           let(:desired) { { 'TimeZone' => 'Saturn' } }
 
           it 'fails' do
-            expect { provider.options }.to raise_error(/TimeZone/)
+            expect { provider.options }.to raise_error(%r{TimeZone})
           end
         end
 
@@ -627,7 +627,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
           it 'does not raise an error' do
             allow(provider).to receive(:query).with('printer-make-and-model').and_return('Local Raw Printer')
 
-            expect { provider.send(:check_make_and_model) }.to raise_error(/make_and_model/)
+            expect { provider.send(:check_make_and_model) }.to raise_error(%r{make_and_model})
           end
         end
       end
@@ -641,7 +641,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
         it 'fails on unsupported options' do
           allow(provider).to receive(:supported_options_is).and_return(current)
 
-          expect { provider.send(:specified_options_is, desired) }.to raise_error(/TimeZone/)
+          expect { provider.send(:specified_options_is, desired) }.to raise_error(%r{TimeZone})
         end
       end
 
@@ -746,7 +746,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
           allow(provider).to receive(:query).with('requesting-user-name-allowed').and_return('')
           allow(provider).to receive(:query).with('requesting-user-name-denied').and_return('')
 
-          expect(provider.send(:users_is)).to eq(%w[all])
+          expect(provider.send(:users_is)).to eq(['all'])
         end
       end
 
@@ -755,7 +755,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
           allow(provider).to receive(:query).with('requesting-user-name-allowed').and_return('nina,@council,nina,lumbergh')
           allow(provider).to receive(:query).with('requesting-user-name-denied').and_return('')
 
-          expect(provider.send(:users_is)).to eq(%w[@council lumbergh nina])
+          expect(provider.send(:users_is)).to eq(['@council', 'lumbergh', 'nina'])
         end
       end
 
@@ -764,7 +764,7 @@ RSpec.describe "Provider 'cups' for type 'cups_queue'" do
           allow(provider).to receive(:query).with('requesting-user-name-allowed').and_return('')
           allow(provider).to receive(:query).with('requesting-user-name-denied').and_return('nina,@council,nina,lumbergh')
 
-          expect(provider.send(:users_is)).to eq(%w[@council lumbergh nina])
+          expect(provider.send(:users_is)).to eq(['@council', 'lumbergh', 'nina'])
         end
       end
     end
