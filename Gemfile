@@ -39,10 +39,7 @@ group :development do
   gem "rb-readline", '= 0.5.5',                  require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem 'net-ftp',                                 require: false
   gem 'github_api',                              require: false
-  gem 'rubocop-rake',                            require: false
-  gem 'patron',                                  require: false
-
-
+  gem 'faraday', '~> 1.10',                      require: false
 end
 group :development, :release_prep do
   gem "puppet-strings", '~> 4.0',         require: false

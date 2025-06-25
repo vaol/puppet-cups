@@ -1,36 +1,31 @@
 on: [push]
 jobs:
   test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.allow_failure }}
     strategy:
+      fail-fast: false
       matrix:
-        ruby: [ '3.2' ]
-        puppet: [ '~> 8.0' ]
-    name: Ruby ${{ matrix.ruby }} using Puppet ${{ matrix.puppet }}
+        include:
+          - ruby: 3.2.0
+            puppet: 8
+            fixtures: .fixtures.yml
+            allow_failure: false
     env:
-      PUPPET_GEM_VERSION: ${{ matrix.puppet }}
+      PUPPET_GEM_VERSION: "~> ${{ matrix.puppet }}.0"
+    name: Puppet ${{ matrix.puppet }} (Ruby ${{ matrix.ruby }} fixtures=${{ matrix.fixtures }})
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-ruby@v1
+      - name: Setup ruby
+        uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-      - run: sudo apt-get update && sudo apt-get install -y libcurl4-openssl-dev
-      - run: gem install bundler -v 2.4.13
-      - uses: actions/cache@v4
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
-      - run: bundle config set without 'acceptance_testing metatools'
-      - run: bundle install
-      - run: bundle exec rake spec_prep
-      - run: bundle exec rake spec_standalone
-      # - uses: paambaati/codeclimate-action@v3.1.1
-      #   with:
-      #     coverageCommand: bundle exec rake github:actions
-      #   env:
-      #     CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+          bundler-cache: true
+          bundler: '2.4.13'
+      - name: Validate
+        run: bundle exec rake check:symlinks check:git_ignore check:dot_underscore check:test_file rubocop syntax lint metadata_lint
+      - name: Run tests
+        run: bundle exec rake parallel_spec
   release:
     name: PuppetForge release, GitHub release, GitHub pages
     needs: test
