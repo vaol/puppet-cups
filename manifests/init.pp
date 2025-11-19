@@ -43,6 +43,7 @@
 # @param max_clients Specifies the maximum number of simultaneous clients to support.
 # @param max_clients_per_host Specifies the maximum number of simultaneous clients to support from a single address.
 # @param max_jobs Specifies the maximum number of jobs.
+# @param max_job_time Specifies the maximum time a job may take to print before it is canceled.
 # @param max_log_size Sets the `MaxLogSize` directive of the CUPS server.
 # @param max_request_size Specifies the maximum request/file size in bytes.
 # @param package_ensure Whether CUPS packages should be `present` or `absent`.
@@ -79,6 +80,7 @@ class cups (
   Optional[Integer]                        $max_clients            = undef,
   Optional[Integer]                        $max_clients_per_host   = undef,
   Optional[Integer]                        $max_jobs               = undef,
+  Optional[Integer]                        $max_job_time           = undef,
   Optional[Variant[Integer, String]]       $max_log_size           = undef,
   Optional[Integer]                        $max_request_size       = undef,
   String                                   $package_ensure         = 'present',

@@ -377,6 +377,20 @@ RSpec.describe 'cups' do
       end
     end
 
+    describe 'max_job_time' do
+      let(:facts) { any_supported_os }
+
+      context 'when not set' do
+        it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^MaxJobTime/) }
+      end
+
+      context 'when set to 900' do
+        let(:params) { { max_job_time: 900 } }
+
+        it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^MaxJobTime 900$/) }
+      end
+    end
+
 
     describe 'max_log_size' do
       let(:facts) { any_supported_os }
