@@ -30,6 +30,7 @@
 #   Accepts a string or an array of supported protocols.
 # @param browse_web_if Boolean value for the `BrowseWebIF` directive of the CUPS server.
 # @param browsing Boolean value for the `Browsing` directive of the CUPS server.
+# @param error_policy Specifies how a failed print job should behave.
 # @param default_queue The name of the default destination for all print jobs.
 #   Requires the catalog to contain a `cups_queue` resource with the same name.
 # @param listen Which addresses to the CUPS daemon should listen to.
@@ -43,6 +44,7 @@
 # @param max_clients Specifies the maximum number of simultaneous clients to support.
 # @param max_clients_per_host Specifies the maximum number of simultaneous clients to support from a single address.
 # @param max_jobs Specifies the maximum number of jobs.
+# @param max_job_time Specifies the maximum time a job may take to print before it is canceled.
 # @param max_log_size Sets the `MaxLogSize` directive of the CUPS server.
 # @param max_request_size Specifies the maximum request/file size in bytes.
 # @param package_ensure Whether CUPS packages should be `present` or `absent`.
@@ -65,38 +67,40 @@
 # @param web_interface Boolean value to enable or disable the server's web interface.
 #
 class cups (
-  Optional[String]                         $access_log_level       = undef,
-  Optional[Variant[String, Array[String]]] $browse_dnssd_subtypes  = undef,
-  Optional[Variant[String, Array[String]]] $browse_local_protocols = undef,
-  Optional[Boolean]                        $browse_web_if          = undef,
-  Boolean                                  $browsing               = false,
-  Optional[String]                         $default_queue          = undef,
-  Variant[String, Array[String]]           $listen                 = ['localhost:631', '/var/run/cups/cups.sock'],
-  Optional[Variant[String, Hash]]          $location               = undef,
-  Optional[Integer]                        $log_debug_history      = undef,
-  Optional[String]                         $log_level              = undef,
-  Optional[String]                         $log_time_format        = undef,
-  Optional[Integer]                        $max_clients            = undef,
-  Optional[Integer]                        $max_clients_per_host   = undef,
-  Optional[Integer]                        $max_jobs               = undef,
-  Optional[Variant[Integer, String]]       $max_log_size           = undef,
-  Optional[Integer]                        $max_request_size       = undef,
-  String                                   $package_ensure         = 'present',
-  Boolean                                  $package_manage         = true,
-  Variant[String, Array[String]]           $package_names          = $::cups::params::package_names,
-  Optional[String]                         $page_log_format        = undef,
-  Optional[String]                         $papersize              = undef,
-  Optional[Variant[Integer, String]]       $preserve_job_files     = undef,
-  Optional[Variant[Integer, String]]       $preserve_job_history   = undef,
-  Boolean                                  $purge_unmanaged_queues = false,
-  Optional[Hash]                           $resources              = undef,
-  Optional[Variant[String, Array[String]]] $server_alias           = undef,
-  Optional[String]                         $server_name            = undef,
-  Boolean                                  $service_enable         = true,
-  String                                   $service_ensure         = 'running',
-  Boolean                                  $service_manage         = true,
-  Variant[String, Array[String]]           $service_names          = 'cups',
-  Optional[Boolean]                        $web_interface          = undef,
+  Optional[String]                         $access_log_level                               = undef,
+  Optional[Variant[String, Array[String]]] $browse_dnssd_subtypes                          = undef,
+  Optional[Variant[String, Array[String]]] $browse_local_protocols                         = undef,
+  Optional[Boolean]                        $browse_web_if                                  = undef,
+  Boolean                                  $browsing                                       = false,
+  Optional[Enum['abort-job','retry-current-job','retry-job','stop-printer']] $error_policy = undef,
+  Optional[String]                         $default_queue                                  = undef,
+  Variant[String, Array[String]]           $listen                                         = ['localhost:631', '/var/run/cups/cups.sock'],
+  Optional[Variant[String, Hash]]          $location                                       = undef,
+  Optional[Integer]                        $log_debug_history                              = undef,
+  Optional[String]                         $log_level                                      = undef,
+  Optional[String]                         $log_time_format                                = undef,
+  Optional[Integer]                        $max_clients                                    = undef,
+  Optional[Integer]                        $max_clients_per_host                           = undef,
+  Optional[Integer]                        $max_jobs                                       = undef,
+  Optional[Integer]                        $max_job_time                                   = undef,
+  Optional[Variant[Integer, String]]       $max_log_size                                   = undef,
+  Optional[Integer]                        $max_request_size                               = undef,
+  String                                   $package_ensure                                 = 'present',
+  Boolean                                  $package_manage                                 = true,
+  Variant[String, Array[String]]           $package_names                                  = $::cups::params::package_names,
+  Optional[String]                         $page_log_format                                = undef,
+  Optional[String]                         $papersize                                      = undef,
+  Optional[Variant[Integer, String]]       $preserve_job_files                             = undef,
+  Optional[Variant[Integer, String]]       $preserve_job_history                           = undef,
+  Boolean                                  $purge_unmanaged_queues                         = false,
+  Optional[Hash]                           $resources                                      = undef,
+  Optional[Variant[String, Array[String]]] $server_alias                                   = undef,
+  Optional[String]                         $server_name                                    = undef,
+  Boolean                                  $service_enable                                 = true,
+  String                                   $service_ensure                                 = 'running',
+  Boolean                                  $service_manage                                 = true,
+  Variant[String, Array[String]]           $service_names                                  = 'cups',
+  Optional[Boolean]                        $web_interface                                  = undef,
 ) inherits cups::params {
 
   contain cups::packages
