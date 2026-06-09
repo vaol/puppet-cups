@@ -160,6 +160,28 @@ RSpec.describe 'cups' do
         end
       end
 
+      describe 'error_policy' do
+        let(:facts) { os_facts }
+
+        context 'when not set' do
+          let(:params) { {} }
+
+          it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: %r{^ErrorPolicy}) }
+        end
+
+        context 'when set to true' do
+          let(:params) { { error_policy: 'abort-job' } }
+
+          it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^ErrorPolicy abort-job$}) }
+        end
+
+        context 'when set to false' do
+          let(:params) { { error_policy: 'stop-printer' } }
+
+          it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^ErrorPolicy stop-printer$}) }
+        end
+      end
+
       describe 'default_queue' do
         let(:facts) { os_facts }
 
@@ -375,6 +397,20 @@ RSpec.describe 'cups' do
           let(:params) { { max_jobs: 200 } }
 
           it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^MaxJobs 200$}) }
+        end
+      end
+
+      describe 'max_job_time' do
+        let(:facts) { os_facts }
+
+        context 'when not set' do
+          it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: %r{^MaxJobTime}) }
+        end
+
+        context 'when set to 900' do
+          let(:params) { { max_job_time: 900 } }
+
+          it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: %r{^MaxJobTime 900$}) }
         end
       end
 
