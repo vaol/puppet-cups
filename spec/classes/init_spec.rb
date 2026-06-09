@@ -161,23 +161,23 @@ RSpec.describe 'cups' do
       end
 
       describe 'error_policy' do
-        let(:facts) { any_supported_os }
-      
+        let(:facts) { os_facts }
+
         context 'when not set' do
           let(:params) { {} }
-        
+
           it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^ErrorPolicy/) }
         end
-      
+
         context 'when set to true' do
           let(:params) { { error_policy: 'abort-job' } }
-        
+
           it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ErrorPolicy abort-job$/) }
         end
-      
+
         context 'when set to false' do
           let(:params) { { error_policy: 'stop-printer' } }
-        
+
           it { is_expected.to contain_file('/etc/cups/cupsd.conf').with(content: /^ErrorPolicy stop-printer$/) }
         end
       end
@@ -401,7 +401,7 @@ RSpec.describe 'cups' do
       end
 
       describe 'max_job_time' do
-        let(:facts) { any_supported_os }
+        let(:facts) { os_facts }
 
         context 'when not set' do
           it { is_expected.to_not contain_file('/etc/cups/cupsd.conf').with(content: /^MaxJobTime/) }
