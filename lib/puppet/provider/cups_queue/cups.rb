@@ -277,7 +277,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
     answer = {}
 
     options = [
-      'auth-info-required', 'job-k-limit', 'job-page-limit', 'job-quota-period', 'job-sheets-default', 'port-monitor', 'printer-error-policy', 'printer-op-policy'
+      'auth-info-required', 'job-k-limit', 'job-page-limit', 'job-quota-period', 'job-sheets-default', 'port-monitor', 'printer-error-policy', 'printer-op-policy', 'job-cancel-after-default'
     ]
 
     options.each { |option| answer[option] = query_native_option(option) }
