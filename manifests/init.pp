@@ -30,6 +30,9 @@
 #   Accepts a string or an array of supported protocols.
 # @param browse_web_if Boolean value for the `BrowseWebIF` directive of the CUPS server.
 # @param browsing Boolean value for the `Browsing` directive of the CUPS server.
+# @param default_options A hash of default printer options to apply to all queues created via the `resources` parameter.
+#   Options specified at the resource level override these defaults.
+#   Accepts a hash where keys are option names and values are the desired option values.
 # @param error_policy Specifies how a failed print job should behave.
 # @param default_queue The name of the default destination for all print jobs.
 #   Requires the catalog to contain a `cups_queue` resource with the same name.
@@ -72,6 +75,7 @@ class cups (
   Optional[Variant[String, Array[String]]] $browse_local_protocols                         = undef,
   Optional[Boolean]                        $browse_web_if                                  = undef,
   Boolean                                  $browsing                                       = false,
+  Optional[Hash]                           $default_options                                = undef,
   Optional[Enum['abort-job','retry-current-job','retry-job','stop-printer']] $error_policy = undef,
   Optional[String]                         $default_queue                                  = undef,
   Variant[String, Array[String]]           $listen                                         = ['localhost:631', '/var/run/cups/cups.sock'],
