@@ -24,8 +24,7 @@
 #
 class cups::queues::resources {
   if ($cups::resources) {
-    # Helper function to merge URL parameters into URI
-    $build_resource = lambda |$name, $attrs| {
+    $merged_resources = $cups::resources.map |$name, $attrs| {
       $resource_options = if $attrs['options'] { $attrs['options'] } else { {} }
       $merged_options = if $cups::default_options {
         $cups::default_options + $resource_options
@@ -51,9 +50,8 @@ class cups::queues::resources {
       }
 
       [$name, $attrs + { 'options' => $merged_options, 'uri' => $final_uri }]
-    }
+    }.convert_to(Hash)
 
-    $merged_resources = $cups::resources.map($build_resource).convert_to(Hash)
     create_resources('cups_queue', $merged_resources)
   }
 }
