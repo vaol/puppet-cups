@@ -279,10 +279,11 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   def native_options_is
     answer = {}
 
-    # Map user-facing names to canonical CUPS names for querying
-    # job-cancel-after-default (user API) -> job-cancel-after (CUPS stores)
+    # Map user-facing names to IPP attribute names for querying
+    # The IPP protocol uses -default suffix for job template defaults
+    # job-cancel-after-default (user API & IPP attr) -> job-cancel-after (lpoptions shows)
     option_map = {
-      'job-cancel-after-default' => 'job-cancel-after',
+      'job-cancel-after-default' => 'job-cancel-after-default',
       'auth-info-required' => 'auth-info-required',
       'job-k-limit' => 'job-k-limit',
       'job-page-limit' => 'job-page-limit',
