@@ -198,6 +198,8 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def options=(options_should)
     options_should.each do |key, value|
+      # User-facing names are already in lpadmin format
+      # (e.g., 'job-cancel-after-default' for lpadmin)
       lpadmin('-p', name, '-o', "#{key}=#{value}")
     end
   end
@@ -273,14 +275,27 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   # All options provided to every queue by CUPS
   #
   # @return [Hash] A hash of all native CUPS queue options and their current values
+  # Note: Returns user-facing names (keys) mapped to canonical CUPS option values
   def native_options_is
     answer = {}
 
-    options = [
-      'auth-info-required', 'job-k-limit', 'job-page-limit', 'job-quota-period', 'job-sheets-default', 'port-monitor', 'printer-error-policy', 'printer-op-policy', 'job-cancel-after-default', 'job-cancel-after'
-    ]
+    # Map user-facing names to canonical CUPS names for querying
+    # job-cancel-after-default (user API) -> job-cancel-after (CUPS stores)
+    option_map = {
+      'job-cancel-after-default' => 'job-cancel-after',
+      'auth-info-required' => 'auth-info-required',
+      'job-k-limit' => 'job-k-limit',
+      'job-page-limit' => 'job-page-limit',
+      'job-quota-period' => 'job-quota-period',
+      'job-sheets-default' => 'job-sheets-default',
+      'port-monitor' => 'port-monitor',
+      'printer-error-policy' => 'printer-error-policy',
+      'printer-op-policy' => 'printer-op-policy'
+    }
 
-    options.each { |option| answer[option] = query_native_option(option) }
+    option_map.each do |user_name, canonical_name|
+      answer[user_name] = query_native_option(canonical_name)
+    end
 
     answer
   end
