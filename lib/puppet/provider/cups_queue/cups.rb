@@ -313,7 +313,7 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
     # Convert numeric options to integers for proper type matching
     # This ensures the getter returns the same type as the user-provided value
-    value = value.to_i if value.match?(/^\d+$/)
+    value = value.to_i if value.match?(%r{^\d+$})
 
     value
   end
