@@ -305,11 +305,15 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   #
   # Queries the native option and sanitizes the result where necessary
   #
-  # @return [String] The sanitized option value
+  # @return [String, Integer] The sanitized option value (integer for numeric options, string otherwise)
   def query_native_option(option)
     value = query(option)
 
     value = 'none' if option == 'auth-info-required' && value.empty? # Related issue: https://github.com/apple/cups/issues/4958
+
+    # Convert numeric options to integers for proper type matching
+    # This ensures the getter returns the same type as the user-provided value
+    value = value.to_i if value.match?(/^\d+$/)
 
     value
   end
