@@ -274,13 +274,13 @@ Puppet::Type.newtype(:cups_queue) do
     end
   end
 
-  newparam(:url_parameters) do
+  newparam(:uri_parameters) do
     desc '(printer-only) URL parameters to append to the device URI.
       Accepts a hash where keys are parameter names and values are the desired parameter values.
       These will be appended to the URI as query parameters (e.g., `socket://host:9100/timeout=10&foo=bar`).'
 
     validate do |value|
-      raise ArgumentError, 'url_parameters must be a hash' unless value.is_a?(Hash)
+      raise ArgumentError, 'uri_parameters must be a hash' unless value.is_a?(Hash)
     end
   end
 
