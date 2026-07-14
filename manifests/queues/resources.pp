@@ -32,7 +32,7 @@ class cups::queues::resources {
         $resource_options
       }
 
-      # Handle URL parameter merging
+      # Handle URI parameter merging
       $resource_uri_params = if $attrs['uri_parameters'] { $attrs['uri_parameters'] } else { {} }
       $merged_uri_params = if $cups::default_uri_parameters {
         $cups::default_uri_parameters + $resource_uri_params
@@ -40,10 +40,10 @@ class cups::queues::resources {
         $resource_uri_params
       }
 
-      # Build final URI with URL parameters appended
-      $final_uri = if !empty($merged_url_params) {
+      # Build final URI with URI parameters appended
+      $final_uri = if !empty($merged_uri_params) {
         # Convert hash to query string: {timeout: 20, foo: bar} -> /timeout=20&foo=bar
-        $query_params = $merged_url_params.map |$key, $value| { "${key}=${value}" }.join('&')
+        $query_params = $merged_uri_params.map |$key, $value| { "${key}=${value}" }.join('&')
         "${attrs['uri']}/${query_params}"
       } else {
         $attrs['uri']
