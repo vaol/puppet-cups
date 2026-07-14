@@ -9,8 +9,8 @@
 # Merges `default_options` with resource-level options, with resource-level
 # options taking precedence.
 #
-# Merges `default_url_parameters` with resource-level url_parameters, with resource-level
-# url_parameters taking precedence. Appends the merged parameters to the URI.
+# Merges `default_uri_parameters` with resource-level uri_parameters, with resource-level
+# uri_parameters taking precedence. Appends the merged parameters to the URI.
 #
 # @author Leo Arnold
 # @since 2.0.0
@@ -33,11 +33,11 @@ class cups::queues::resources {
       }
 
       # Handle URL parameter merging
-      $resource_url_params = if $attrs['url_parameters'] { $attrs['url_parameters'] } else { {} }
-      $merged_url_params = if $cups::default_url_parameters {
-        $cups::default_url_parameters + $resource_url_params
+      $resource_uri_params = if $attrs['uri_parameters'] { $attrs['uri_parameters'] } else { {} }
+      $merged_uri_params = if $cups::default_uri_parameters {
+        $cups::default_uri_parameters + $resource_uri_params
       } else {
-        $resource_url_params
+        $resource_uri_params
       }
 
       # Build final URI with URL parameters appended
