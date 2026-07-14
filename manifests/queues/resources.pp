@@ -52,6 +52,6 @@ class cups::queues::resources {
       [$name, $attrs + { 'options' => $merged_options, 'uri' => $final_uri }]
     }.convert_to(Hash)
 
-    create_resources('cups_queue', $merged_resources.delete('url_parameters'))
+    create_resources('cups_queue', $merged_resources)
   }
 }
