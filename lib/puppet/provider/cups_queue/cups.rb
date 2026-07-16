@@ -198,6 +198,8 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
 
   def options=(options_should)
     options_should.each do |key, value|
+      # User-facing names are already in lpadmin format
+      # (e.g., 'job-cancel-after-default' for lpadmin)
       lpadmin('-p', name, '-o', "#{key}=#{value}")
     end
   end
@@ -273,14 +275,28 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   # All options provided to every queue by CUPS
   #
   # @return [Hash] A hash of all native CUPS queue options and their current values
+  # Note: Returns user-facing names (keys) mapped to canonical CUPS option values
   def native_options_is
     answer = {}
 
-    options = [
-      'auth-info-required', 'job-k-limit', 'job-page-limit', 'job-quota-period', 'job-sheets-default', 'port-monitor', 'printer-error-policy', 'printer-op-policy'
-    ]
+    # Map user-facing names to IPP attribute names for querying
+    # The IPP protocol uses -default suffix for job template defaults
+    # job-cancel-after-default (user API & IPP attr) -> job-cancel-after (lpoptions shows)
+    option_map = {
+      'job-cancel-after-default' => 'job-cancel-after-default',
+      'auth-info-required' => 'auth-info-required',
+      'job-k-limit' => 'job-k-limit',
+      'job-page-limit' => 'job-page-limit',
+      'job-quota-period' => 'job-quota-period',
+      'job-sheets-default' => 'job-sheets-default',
+      'port-monitor' => 'port-monitor',
+      'printer-error-policy' => 'printer-error-policy',
+      'printer-op-policy' => 'printer-op-policy'
+    }
 
-    options.each { |option| answer[option] = query_native_option(option) }
+    option_map.each do |user_name, canonical_name|
+      answer[user_name] = query_native_option(canonical_name)
+    end
 
     answer
   end
@@ -289,11 +305,15 @@ Puppet::Type.type(:cups_queue).provide(:cups) do
   #
   # Queries the native option and sanitizes the result where necessary
   #
-  # @return [String] The sanitized option value
+  # @return [String, Integer] The sanitized option value (integer for numeric options, string otherwise)
   def query_native_option(option)
     value = query(option)
 
     value = 'none' if option == 'auth-info-required' && value.empty? # Related issue: https://github.com/apple/cups/issues/4958
+
+    # Convert numeric options to integers for proper type matching
+    # This ensures the getter returns the same type as the user-provided value
+    value = value.to_i if value.match?(%r{^\d+$})
 
     value
   end

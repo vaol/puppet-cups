@@ -23,6 +23,7 @@ RSpec.describe 'cups' do
       let(:undefs) do
         [
           :default_queue,
+          :default_options,
           :location,
           :papersize,
           :resources,
@@ -648,6 +649,64 @@ RSpec.describe 'cups' do
           it { is_expected.to contain_cups_queue('BackOffice').with(ensure: 'printer') }
 
           it { is_expected.to contain_cups_queue('UpperFloor').with(ensure: 'class', members: ['BackOffice']) }
+        end
+
+        context 'when default_options are provided' do
+          context 'with options specified at resource level' do
+            let(:params) do
+              {
+                default_options: { 'job-priority' => '50', 'media' => 'na_letter_8.5x11in' },
+                resources: {
+                  'Office' => {
+                    'ensure' => 'printer',
+                    'uri' => 'lpd://192.168.1.100/lp',
+                    'options' => { 'media' => 'na_legal_8.5x14in' }
+                  }
+                }
+              }
+            end
+
+            it { is_expected.to contain_cups_queue('Office').with(ensure: 'printer', options: { 'job-priority' => '50', 'media' => 'na_legal_8.5x14in' }) }
+          end
+
+          context 'without options at resource level' do
+            let(:params) do
+              {
+                default_options: { 'job-priority' => '50', 'media' => 'na_letter_8.5x11in' },
+                resources: {
+                  'Office' => {
+                    'ensure' => 'printer',
+                    'uri' => 'lpd://192.168.1.100/lp'
+                  }
+                }
+              }
+            end
+
+            it { is_expected.to contain_cups_queue('Office').with(ensure: 'printer', options: { 'job-priority' => '50', 'media' => 'na_letter_8.5x11in' }) }
+          end
+
+          context 'with multiple resources' do
+            let(:params) do
+              {
+                default_options: { 'job-priority' => '50' },
+                resources: {
+                  'Office' => {
+                    'ensure' => 'printer',
+                    'uri' => 'lpd://192.168.1.100/lp',
+                    'options' => { 'media' => 'na_legal_8.5x14in' }
+                  },
+                  'Warehouse' => {
+                    'ensure' => 'printer',
+                    'uri' => 'lpd://192.168.1.101/lp'
+                  }
+                }
+              }
+            end
+
+            it { is_expected.to contain_cups_queue('Office').with(ensure: 'printer', options: { 'job-priority' => '50', 'media' => 'na_legal_8.5x14in' }) }
+
+            it { is_expected.to contain_cups_queue('Warehouse').with(ensure: 'printer', options: { 'job-priority' => '50' }) }
+          end
         end
       end
 
